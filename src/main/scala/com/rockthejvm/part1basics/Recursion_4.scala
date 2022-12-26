@@ -2,7 +2,7 @@ package com.rockthejvm.part1basics
 
 import scala.annotation.tailrec
 
-object Recursion {
+object Recursion_4 {
 
   // "repetition" = recursion
   def sumUntil(n: Int): Int =
@@ -20,6 +20,7 @@ object Recursion {
       = 1 + 2 + 3 + .. + 10
      */
     @tailrec
+    // here accumulator is like the same intermediate variable in imperative languages that keeps track of the result
     def sumUntilTailrec(x: Int, accumulator: Int): Int =
       if (x <= 0) accumulator
       else sumUntilTailrec(x - 1, accumulator + x) // TAIL recursion = recursive call occurs LAST in its code path
