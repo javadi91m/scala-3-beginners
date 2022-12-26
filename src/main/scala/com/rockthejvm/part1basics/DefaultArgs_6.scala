@@ -2,7 +2,7 @@ package com.rockthejvm.part1basics
 
 import scala.annotation.tailrec
 
-object DefaultArgs {
+object DefaultArgs_6 {
 
   @tailrec
   def sumUntilTailrec(x: Int, accumulator: Int = 0): Int =
@@ -17,6 +17,14 @@ object DefaultArgs {
 
 
   def main(args: Array[String]): Unit = {
+
+    // if you pass any values, including null, the exact value will be passed (including null) and default value will be ignored
+    def test(obj: Object = new Object) = {
+      println(obj)
+    }
+    test(null) // null will be printed
+
+
     // default args are injected
     savePicture("/users/daniel/photos", "myphoto")
     // pass explicit different values for default args
