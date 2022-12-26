@@ -1,6 +1,6 @@
 package com.rockthejvm.part1basics
 
-object Functions {
+object Functions_3 {
 
   // function = reusable piece of code that you can invoke with some arguments and return a result
   def aFunction(a: String, b: Int): String =
@@ -9,6 +9,7 @@ object Functions {
   // function invocation
   val aFunctionInvocation = aFunction("Scala", 999999999)
 
+  // these two are the same
   def aNoArgFunction(): Int = 45
   def aParamterlessFunction: Int = 45
 
@@ -18,22 +19,23 @@ object Functions {
     else if (n == 1) str
     else str + stringConcatenation(str, n - 1)
 
+  // WHEN YOU NEED LOOPS, USE RECURSION.
   /*
     sc("Scala", 3) = "Scala" + sc("Scala", 2) = "Scala" + "ScalaScala" = "ScalaScalaScala"
     sc("Scala", 2) = "Scala" + sc("Scala", 1) = "Scala" + "Scala" = "ScalaScala"
     sc("Scala", 1) = "Scala"
    */
   val scalax3 = stringConcatenation("Scala", 3)
-  // when you need loops, use RECURSION.
 
   // "void" functions
   def aVoidFunction(aString: String): Unit =
     println(aString)
 
+  // NOTE: side effects are some computations without returning any value
   def computeDoubleStringWithSideEffect(aString: String): String = {
-    aVoidFunction(aString) // Unit
+    aVoidFunction(aString) // Unit => side effects
     aString + aString // meaningful value
-  } // discouraging side effects
+  } // side effects inside a function are discouraged
 
   def aBigFunction(n: Int): Int = {
     // small, auxiliary functions inside
@@ -80,7 +82,7 @@ object Functions {
     fib(2) = 1
     fib(1) = 1
    */
-  def fibonacci(n: Int): Int =
+  def fibonacci(n: Int): Long =
     if (n <= 2) 1
     else fibonacci(n - 1) + fibonacci(n - 2)
 
