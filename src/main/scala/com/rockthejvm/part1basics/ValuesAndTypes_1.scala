@@ -1,6 +1,6 @@
 package com.rockthejvm.part1basics
 
-object ValuesAndTypes {
+object ValuesAndTypes_1 {
 
   // values
   val meaningOfLife: Int = 42 // const int meaningOfLife = 42
@@ -8,7 +8,7 @@ object ValuesAndTypes {
   // reassigning is not allowed
   // meaningOfLife = 45
 
-  // type inferrence
+  // type inference
   val anInteger = 67 // : Int is optional
 
   // common types

@@ -1,11 +1,11 @@
 package com.rockthejvm.part1basics
 
-object Expressions {
+object Expressions_2 {
 
   // expressions are structures that can be evaluated to a value
   val meaningOfLife = 40 + 2
 
-  // mathematical expressions: +, -, *, /, bitwise |, &, <<, >>, >>>
+  // mathematical expressions: +, -, *, /, bitwise |, &, <<, >>, >>> (right shift with zero extension and not with a sign extension), ~ (bit negation), ^ (XOR)
   val mathExpression = 2 + 3 * 4
 
   // comparison expressions: <, <=, >, >=, ==, !=
@@ -15,14 +15,14 @@ object Expressions {
   val nonEqualityTest = !equalityTest
 
   // instructions vs expressions
-  // expressions are evaluated, instructions are executed
+  // expressions are evaluated and will be fold to a single value, but instructions are executed
   // we think in terms of expressions
 
   // ifs are expressions
   val aCondition = true
   val anIfExpression = if (aCondition) 45 else 99
 
-  // code blocks
+  // code blocks are expressions too!
   val aCodeBlock = {
     // local values
     val localValue = 78
@@ -56,6 +56,7 @@ object Expressions {
   def main(args: Array[String]): Unit = {
     println(someValue) // true
     println(someOtherValue) // 42
+    // note: "Scala" will be printed before execution of main method.
     println(yetAnotherValue) // Scala, ()
   }
 }
