@@ -69,6 +69,7 @@ object Functions_3 {
     f(2) = 2 * f(1) = 2
     f(1) = 1
    */
+  // NOTE: in a recursive function, you have to always specify the return type of the function, otherwise compiler will complain
   def factorial(n: Int): Int =
     if (n <= 0) 0
     else if (n == 1) 1
