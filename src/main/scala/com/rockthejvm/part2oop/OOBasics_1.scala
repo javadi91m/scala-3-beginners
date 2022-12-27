@@ -1,10 +1,12 @@
 package com.rockthejvm.part2oop
 
-object OOBasics {
+object OOBasics_1 {
 
   // classes
+  // if you don't put "val"/"var" before a constructor argument, Scala keeps it as a private variable which is accessible only through the class
+  // it means class parameters are not the same as class fields!
   class Person(val name: String, age: Int) { // constructor signature
-    // fields
+    // fields => all instances of a class will have this field (public)
     val allCaps = name.toUpperCase()
 
     // methods
@@ -14,9 +16,10 @@ object OOBasics {
     // signature differs
     // OVERLOADING
     def greet(): String =
-      s"Hi, everyone, my name is $name"
+      s"Hi, everyone, my name is $name and I'm $age years old"
 
     // aux constructor
+    // auxiliary constructors are not that relevant in Scala, because we have to call another constructor in them. we can achieve the same by providing default values ib the main constructor
     def this(name: String) =
       this(name, 0)
 
