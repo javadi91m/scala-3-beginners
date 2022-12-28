@@ -4,6 +4,8 @@ import scala.annotation.tailrec
 
 object Recursion_4 {
 
+  // TIP: in for loops, we can reassign a variable, but we cannot do that in FP
+  // we can achieve the same by using recursion
   // "repetition" = recursion
   def sumUntil(n: Int): Int =
     if (n <= 0) 0

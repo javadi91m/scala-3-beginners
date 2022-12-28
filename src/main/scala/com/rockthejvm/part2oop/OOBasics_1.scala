@@ -2,6 +2,13 @@ package com.rockthejvm.part2oop
 
 object OOBasics_1 {
 
+  // if we want to make a class with class fields immutable, and if we have this requirement to change some of the instance attributes,
+  // we need to return a new instance on every mutation
+
+  // convention: if you have a no arg method, you can write it with/without parenthesis.
+  // if that method just returns a value (like getter methods) without doing any action, better to write them without parenthesis
+  // if that method does some action (e.g. print() ), better to write the parenthesis
+
   // classes
   // if you don't put "val"/"var" before a constructor argument, Scala keeps it as a private variable which is accessible only through the class
   // it means class parameters are not the same as class fields!
@@ -102,7 +109,7 @@ class Counter(count: Int = 0) {
 
   def increment(n: Int): Counter =
     if (n <= 0) this
-    else increment().increment(n - 1) // vulnerable to SOs
+    else increment().increment(n - 1) // vulnerable to StackOverflow
 
   def decrement(n: Int): Counter =
     if (n <= 0) this
