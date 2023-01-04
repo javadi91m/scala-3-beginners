@@ -1,10 +1,11 @@
 package com.rockthejvm.part2oop
 
-import scala.language.postfixOps
-
-object MethodNotations {
+object MethodNotations_2 {
 
   class Person(val name: String, val age: Int, favoriteMovie: String) {
+    
+    // in scala 2.x.x and 3.0.0, infix is optional and all methods with only one argument are eligible for infix notatopn,
+    // but this can change in newer versions, so better explicitly mention this
     infix def likes(movie: String): Boolean =
       movie == favoriteMovie
 
@@ -18,15 +19,21 @@ object MethodNotations {
       s"$name wonders how can $progLanguage be so cool!"
 
     // prefix position
-    // unary ops: -, +, ~, !
+    // unary ops: -, +, ~, ! => no args, no parenthesis
+    // make sure to start the name with "unary_" and then write your desired name.
+    // after completing the name, make sure to include a "white space" and then include ":" (for mentioning the return type)
+    // otherwise compiler thinks ":" is part of the method name
     def unary_- : String =
       s"$name's alter ego"
 
     def unary_+ : Person =
       new Person(name, age + 1, favoriteMovie)
 
+    // postfix notation => they don't take any arguments AND we need "import scala.language.postfixOps"
     def isAlive: Boolean = true
 
+    // apply method is special, we can eliminate "apply" while calling the method
+    // e.g. person.apply() => person() AND person.apply(10) => person(10)
     def apply(): String =
       s"Hi, my name is $name and I really enjoy $favoriteMovie"
 
@@ -66,6 +73,8 @@ object MethodNotations {
 
     // postfix notation
     println(mary.isAlive)
+
+    import scala.language.postfixOps
     println(mary isAlive) // discouraged
 
     // apply is special
