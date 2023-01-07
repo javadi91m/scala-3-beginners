@@ -1,6 +1,21 @@
 package com.rockthejvm.part2oop
 
-object Generics {
+object Generics_9 {
+
+  // multiple type arguments
+  trait MyMap[Key, Value]
+
+  // GENERIC METHODS
+  object MyList {
+    def from2Elements[A](elem1: A, elem2: A): MyList[A] =
+      new NonEmpty[A](elem1, new NonEmpty[A](elem2, new Empty[A]))
+  }
+
+  // calling methods
+  val first2Numbers = MyList.from2Elements[Int](1, 2)
+  val first2Numbers_v2 = MyList.from2Elements(1, 2) // compiler can infer generic type from the type of the arguments
+  val first2Numbers_v3 = new NonEmpty(1, new NonEmpty(2, new Empty))
+
 
   // goal: reuse code on different types
 
@@ -72,21 +87,7 @@ object Generics {
   // compiler now knows the real type of the elements
   val firstNumber = listOfIntegers.head
   val adding = firstNumber + 3
-
-  // multiple type arguments
-  trait MyMap[Key, Value]
-
-  // generic methods
-  object MyList {
-    def from2Elements[A](elem1: A, elem2: A): MyList[A] =
-      new NonEmpty[A](elem1, new NonEmpty[A](elem2, new Empty[A]))
-  }
-
-  // calling methods
-  val first2Numbers = MyList.from2Elements[Int](1, 2)
-  val first2Numbers_v2 = MyList.from2Elements(1, 2) // compiler can infer generic type from the type of the arguments
-  val first2Numbers_v3 = new NonEmpty(1, new NonEmpty(2, new Empty))
-
+  
   /**
    * Exercise: genericize LList.
    */
