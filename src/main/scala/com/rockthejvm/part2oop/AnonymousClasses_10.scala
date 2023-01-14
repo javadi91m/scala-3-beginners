@@ -1,6 +1,6 @@
 package com.rockthejvm.part2oop
 
-object AnonymousClasses {
+object AnonymousClasses_10 {
 
   abstract class Animal {
     def eat(): Unit
