@@ -20,6 +20,8 @@ abstract class SinglyLList[A] {
 
   infix def ++(anotherList: SinglyLList[A]): SinglyLList[A]
 
+  def find(predicateL: PredicateL[A]): A
+
 }
 
 case class EmptyList[A]() extends SinglyLList[A] {
@@ -38,6 +40,9 @@ case class EmptyList[A]() extends SinglyLList[A] {
   override def flatMap[B](transformer: TransformerL[A, SinglyLList[B]]): SinglyLList[B] = EmptyList()
 
   override infix def ++(anotherList: SinglyLList[A]): SinglyLList[A] = anotherList
+
+  override def find(predicateL: PredicateL[A]): A = throw new NoSuchElementException("List is empty")
+
 }
 
 // we're overriding head/tail methods (accessor methods) as class fields
@@ -77,6 +82,9 @@ case class SinglyLinkedList[A](override val head: A, override val tail: SinglyLL
     if (anotherList.isEmpty) this
     else SinglyLinkedList(this.head, tail ++ anotherList)
 
+  override def find(predicate: PredicateL[A]): A =
+    if (predicate.test(head)) head
+    else tail.find(predicate)
 
 }
 
@@ -95,6 +103,7 @@ object SinglyLList extends App {
   println(list2.toString + " map => " + list2.map(x => x * 2))
   println(list2.toString + " flatMap => " + list2.flatMap(x => SinglyLinkedList(x, SinglyLinkedList(x * 2, EmptyList()))))
 
+  println(list2.find(x => x == -1))
 }
 
 trait PredicateL[T] {
