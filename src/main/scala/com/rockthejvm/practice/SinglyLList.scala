@@ -10,7 +10,7 @@ abstract class SinglyLList[A] {
 
   def isEmpty: Boolean
 
-  def add(element: A): SinglyLList[A] = new SinglyLinkedList[A](element, this)
+  def add(element: A): SinglyLList[A] = SinglyLinkedList(element, this)
 
   def filter(predicate: PredicateL[A]): SinglyLList[A]
 
@@ -22,7 +22,7 @@ abstract class SinglyLList[A] {
 
 }
 
-class EmptyList[A]() extends SinglyLList[A] {
+case class EmptyList[A]() extends SinglyLList[A] {
   override def head: A = throw new NoSuchElementException("List is empty")
 
   override def tail: SinglyLList[A] = throw new NoSuchElementException("List is empty")
@@ -31,17 +31,17 @@ class EmptyList[A]() extends SinglyLList[A] {
 
   override def toString: String = "[]"
 
-  override def filter(predicate: PredicateL[A]): SinglyLList[A] = new EmptyList[A]
+  override def filter(predicate: PredicateL[A]): SinglyLList[A] = EmptyList()
 
-  override def map[B](transformer: TransformerL[A, B]): SinglyLList[B] = new EmptyList[B]
+  override def map[B](transformer: TransformerL[A, B]): SinglyLList[B] = EmptyList()
 
-  override def flatMap[B](transformer: TransformerL[A, SinglyLList[B]]): SinglyLList[B] = new EmptyList[B]
+  override def flatMap[B](transformer: TransformerL[A, SinglyLList[B]]): SinglyLList[B] = EmptyList()
 
   override infix def ++(anotherList: SinglyLList[A]): SinglyLList[A] = anotherList
 }
 
 // we're overriding head/tail methods (accessor methods) as class fields
-class SinglyLinkedList[A](override val head: A, override val tail: SinglyLList[A]) extends SinglyLList[A] {
+case class SinglyLinkedList[A](override val head: A, override val tail: SinglyLList[A]) extends SinglyLList[A] {
   override def isEmpty: Boolean = false
 
   override def toString: String = {
@@ -55,7 +55,7 @@ class SinglyLinkedList[A](override val head: A, override val tail: SinglyLList[A
   }
 
   override def filter(predicate: PredicateL[A]): SinglyLList[A] =
-    if (predicate.test(head)) new SinglyLinkedList[A](head, tail.filter(predicate))
+    if (predicate.test(head)) SinglyLinkedList(head, tail.filter(predicate))
     else tail.filter(predicate)
 
   // implementation below is tailrec, but requires reversing at the end of the process
@@ -68,14 +68,14 @@ class SinglyLinkedList[A](override val head: A, override val tail: SinglyLList[A
   //    filter(this, new EmptyList[A])
 
   override def map[B](transformer: TransformerL[A, B]): SinglyLList[B] =
-    new SinglyLinkedList[B](transformer.transform(head), tail.map(transformer))
+    SinglyLinkedList(transformer.transform(head), tail.map(transformer))
 
   override def flatMap[B](transformer: TransformerL[A, SinglyLList[B]]): SinglyLList[B] =
     transformer.transform(head) ++ tail.flatMap(transformer)
 
   override infix def ++(anotherList: SinglyLList[A]): SinglyLList[A] =
     if (anotherList.isEmpty) this
-    else new SinglyLinkedList[A](this.head, tail ++ anotherList)
+    else SinglyLinkedList(this.head, tail ++ anotherList)
 
 
 }
@@ -83,8 +83,8 @@ class SinglyLinkedList[A](override val head: A, override val tail: SinglyLList[A
 object SinglyLList extends App {
 
   // compiler can infer generic types without explicitly typing them
-  val list: SinglyLList[Int] = new SinglyLinkedList(10, new SinglyLinkedList(7, new SinglyLinkedList(14, new EmptyList)))
-  val list2: SinglyLList[Int] = new EmptyList().add(1).add(4).add(3).add(67).add(-1).add(-2).add(6)
+  val list: SinglyLList[Int] = SinglyLinkedList(10, SinglyLinkedList(7, SinglyLinkedList(14, EmptyList())))
+  val list2: SinglyLList[Int] = EmptyList().add(1).add(4).add(3).add(67).add(-1).add(-2).add(6)
   println(list)
 
   val evenPredicate = new PredicateL[Int] {
@@ -93,7 +93,7 @@ object SinglyLList extends App {
   println(list2 ++ list)
   println(list2.toString + " filter => " + list2.filter(x => x % 2 == 0))
   println(list2.toString + " map => " + list2.map(x => x * 2))
-  println(list2.toString + " flatMap => " + list2.flatMap(x => new SinglyLinkedList[Int](x, new SinglyLinkedList[Int](x * 2, new EmptyList[Int]))))
+  println(list2.toString + " flatMap => " + list2.flatMap(x => SinglyLinkedList(x, SinglyLinkedList(x * 2, EmptyList()))))
 
 }
 
