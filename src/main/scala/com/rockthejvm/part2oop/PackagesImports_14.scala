@@ -2,9 +2,10 @@ package com.rockthejvm.part2oop
 
 import scala.collection.SortedSet
 
-// can define values and methods top-level
-// they will be included in a synthetic object
+// in Scala 3 (not available in 2) we can define values and methods at the top-level
+// they will be included in a synthetic object with the same name as the package
 // can be imported via an mypackage.* import
+// we can consider these as global variables/def which are anti-patterns. we better not to use them
 val meaningOfLife = 42
 def computeMyLife: String = "Scala"
 
@@ -19,7 +20,8 @@ object PackagesImports { // top-level definition
   val anotherList: LList[Int] = ???
 
   // importing under an alias
-  import java.util.{List as JList}
+  import java.util.{List as JList} // as was added in Scala 3
+//  import java.util.{List => JList} // => was there in Scala 2
   val aJavaList: JList[Int] = ???
 
   // import everything
@@ -32,11 +34,12 @@ object PackagesImports { // top-level definition
 
   // import everything EXCEPT something
   object PlayingPhysics {
+    // here we're excluding PLACK, but everything else will be imported
     import PhysicsConstants.{PLACK as _, *}
     // val plank = PLANK // will not work
   }
 
-  import com.rockthejvm.part2oop.* // import the mol and computeMyLife
+  import com.rockthejvm.part2oop.* // import the meaningOfLife and computeMyLife => these have been defined at top-level, outside of the top-level object
   val mol = meaningOfLife
 
   // default imports:
@@ -53,6 +56,7 @@ object PackagesImports { // top-level definition
     val physicsCalculator = new PhysicsCalculator
 
     // exports create aliases for fields/methods to use locally
+    // it means we can use this method by its plain-name, as if it's a first-citizen here
     export physicsCalculator.computePhotonEnergy
 
     def computeEquivalentMass(wavelength: Double): Double =
