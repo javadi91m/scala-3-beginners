@@ -1,6 +1,6 @@
 package com.rockthejvm.part3fp
 
-object WhatsAFunction {
+object WhatsAFunction_1 {
 
   // FP: functions are "first-class" citizens, i.e. work with functions like any other values
   // JVM was built for Java, an OO language: objects (instances of classes) are "first-class" citizens
@@ -45,6 +45,30 @@ object WhatsAFunction {
    * 3. Define a function which takes an int as argument and returns ANOTHER FUNCTION as a result.
    */
 
+
+  val aWeirdFunc = new Function1[Int, Function1[Int, Int]] {
+    override def apply(x: Int): Int => Int = new Function1[Int, Int] {
+      override def apply(y: Int): Int = x + y
+    }
+  }
+
+  println(aWeirdFunc(10))
+
+
+  // we can assign a function (right-hand side) to both a "def" and a "val"
+  // the difference will be in the way we call them.
+  // in case of a "def", there will be an extra ()
+  def concatenatorDef(): (String, String) => String = new Function2[String, String, String] {
+    override def apply(a: String, b: String) = a + b
+  }
+
+  val concatenatorVal: (String, String) => String = new Function2[String, String, String] {
+    override def apply(a: String, b: String) = a + b
+  }
+
+  concatenatorDef()("hello ", "world")
+  concatenatorVal("hello ", "world")
+
   // 1
   val concatenator: (String, String) => String = new Function2[String, String, String] {
     override def apply(a: String, b: String) = a + b
@@ -73,4 +97,5 @@ object WhatsAFunction {
   def main(args: Array[String]): Unit = {
     println(concatenator("I love ", "Scala"))
   }
+
 }

@@ -12,15 +12,15 @@ abstract class SinglyLList[A] {
 
   def add(element: A): SinglyLList[A] = SinglyLinkedList(element, this)
 
-  def filter(predicate: PredicateL[A]): SinglyLList[A]
+  def filter(predicate: A => Boolean): SinglyLList[A]
 
-  def map[B](transformer: TransformerL[A, B]): SinglyLList[B]
+  def map[B](transformer: A => B): SinglyLList[B]
 
-  def flatMap[B](transformer: TransformerL[A, SinglyLList[B]]): SinglyLList[B]
+  def flatMap[B](transformer: A => SinglyLList[B]): SinglyLList[B]
 
   infix def ++(anotherList: SinglyLList[A]): SinglyLList[A]
 
-  def find(predicateL: PredicateL[A]): A
+  def find(predicate: A => Boolean): A
 
 }
 
@@ -33,15 +33,15 @@ case class EmptyList[A]() extends SinglyLList[A] {
 
   override def toString: String = "[]"
 
-  override def filter(predicate: PredicateL[A]): SinglyLList[A] = EmptyList()
+  override def filter(predicate: A => Boolean): SinglyLList[A] = EmptyList()
 
-  override def map[B](transformer: TransformerL[A, B]): SinglyLList[B] = EmptyList()
+  override def map[B](transformer: A => B): SinglyLList[B] = EmptyList()
 
-  override def flatMap[B](transformer: TransformerL[A, SinglyLList[B]]): SinglyLList[B] = EmptyList()
+  override def flatMap[B](transformer: A => SinglyLList[B]): SinglyLList[B] = EmptyList()
 
   override infix def ++(anotherList: SinglyLList[A]): SinglyLList[A] = anotherList
 
-  override def find(predicateL: PredicateL[A]): A = throw new NoSuchElementException("List is empty")
+  override def find(predicateL: A => Boolean): A = throw new NoSuchElementException("List is empty")
 
 }
 
@@ -59,8 +59,8 @@ case class SinglyLinkedList[A](override val head: A, override val tail: SinglyLL
     s"[${concatenate(s"$head", this.tail)}]"
   }
 
-  override def filter(predicate: PredicateL[A]): SinglyLList[A] =
-    if (predicate.test(head)) SinglyLinkedList(head, tail.filter(predicate))
+  override def filter(predicate: A => Boolean): SinglyLList[A] =
+    if (predicate(head)) SinglyLinkedList(head, tail.filter(predicate))
     else tail.filter(predicate)
 
   // implementation below is tailrec, but requires reversing at the end of the process
@@ -72,18 +72,18 @@ case class SinglyLinkedList[A](override val head: A, override val tail: SinglyLL
   //
   //    filter(this, new EmptyList[A])
 
-  override def map[B](transformer: TransformerL[A, B]): SinglyLList[B] =
-    SinglyLinkedList(transformer.transform(head), tail.map(transformer))
+  override def map[B](transformer: A => B): SinglyLList[B] =
+    SinglyLinkedList(transformer(head), tail.map(transformer))
 
-  override def flatMap[B](transformer: TransformerL[A, SinglyLList[B]]): SinglyLList[B] =
-    transformer.transform(head) ++ tail.flatMap(transformer)
+  override def flatMap[B](transformer: A => SinglyLList[B]): SinglyLList[B] =
+    transformer(head) ++ tail.flatMap(transformer)
 
   override infix def ++(anotherList: SinglyLList[A]): SinglyLList[A] =
     if (anotherList.isEmpty) this
     else SinglyLinkedList(this.head, tail ++ anotherList)
 
-  override def find(predicate: PredicateL[A]): A =
-    if (predicate.test(head)) head
+  override def find(predicate: A => Boolean): A =
+    if (predicate(head)) head
     else tail.find(predicate)
 
 }
@@ -95,23 +95,12 @@ object SinglyLList extends App {
   val list2: SinglyLList[Int] = EmptyList().add(1).add(4).add(3).add(67).add(-1).add(-2).add(6)
   println(list)
 
-  val evenPredicate = new PredicateL[Int] {
-    override def test(t: Int): Boolean = t % 2 == 0
-  }
   println(list2 ++ list)
   println(list2.toString + " filter => " + list2.filter(x => x % 2 == 0))
   println(list2.toString + " map => " + list2.map(x => x * 2))
   println(list2.toString + " flatMap => " + list2.flatMap(x => SinglyLinkedList(x, SinglyLinkedList(x * 2, EmptyList()))))
 
   println(list2.find(x => x == -1))
-}
-
-trait PredicateL[T] {
-  def test(t: T): Boolean
-}
-
-trait TransformerL[A, B] {
-  def transform(a: A): B
 }
 
 
