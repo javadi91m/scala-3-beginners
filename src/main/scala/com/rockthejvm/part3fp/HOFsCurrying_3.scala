@@ -63,7 +63,7 @@ object HOFsCurrying_3 {
    *      [3,2,4,1].sort((x, y) => x - y) = [1,2,3,4]
    *      (hint: use insertion sort)
    *
-   *    - zipWith[B](LList[A], (A, A) => B): LList[B]
+   *    - zipWith[B](LList[T], (A, T) => B): LList[B]
    *      [1,2,3].zipWith([4,5,6], x * y) => [1 * 4, 2 * 5, 3 * 6] = [4, 10, 18]
    *
    *    - foldLeft[B](start: B)((B, A) => B): B
@@ -84,7 +84,8 @@ object HOFsCurrying_3 {
   def toCurry[A, B, C](f: (A, B) => C): A => B => C =
     x => y => f(x, y)
 
-  val superAdder_v2 = toCurry[Int, Int, Int](_ + _) // same as superAdder
+  val superAdder_v2 = toCurry[Int, Int, Int]((x, y) => x + y) // same as superAdder
+//  val superAdder_v2 = toCurry[Int, Int, Int](_ + _) // same as superAdder
 
   def fromCurry[A, B, C](f: A => B => C): (A, B) => C =
     (x, y) => f(x)(y)

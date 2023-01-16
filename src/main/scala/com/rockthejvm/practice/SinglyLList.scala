@@ -26,7 +26,7 @@ abstract class SinglyLList[A] {
 
   def size: Int
 
-  def zipWith[B](anotherList: SinglyLList[A], operator: (A, A) => B): SinglyLList[B]
+  def zipWith[B, T](anotherList: SinglyLList[T], operator: (A, T) => B): SinglyLList[B]
 
   def foldLeft[B](start: B)(operator: (B, A) => B): B
 
@@ -53,11 +53,11 @@ case class EmptyList[A]() extends SinglyLList[A] {
 
   override def find(predicate: A => Boolean): A = throw new NoSuchElementException("List is empty")
 
-  override def foreach(operator: A => Unit): Unit = EmptyList()
+  override def foreach(operator: A => Unit): Unit = () // () is Unit
 
   override def size: Int = 0
 
-  override def zipWith[B](anotherList: SinglyLList[A], operator: (A, A) => B): SinglyLList[B] =
+  override def zipWith[B, T](anotherList: SinglyLList[T], operator: (A, T) => B): SinglyLList[B] =
     if (!anotherList.isEmpty) throw new IllegalArgumentException("both lists must have the same size")
     else EmptyList()
 
@@ -120,7 +120,7 @@ case class SinglyLinkedList[A](override val head: A, override val tail: SinglyLL
     size(this, 0)
   }
 
-  override def zipWith[B](anotherList: SinglyLList[A], operator: (A, A) => B): SinglyLList[B] =
+  override def zipWith[B, T](anotherList: SinglyLList[T], operator: (A, T) => B): SinglyLList[B] =
     if (anotherList.isEmpty) throw new IllegalArgumentException("both lists must have the same size")
     else SinglyLinkedList(operator(this.head, anotherList.head), this.tail.zipWith(anotherList.tail, operator))
 
