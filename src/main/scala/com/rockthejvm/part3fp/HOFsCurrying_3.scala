@@ -2,23 +2,23 @@ package com.rockthejvm.part3fp
 
 import scala.annotation.tailrec
 
-object HOFsCurrying {
+object HOFsCurrying_3 {
 
-  // higher order functions (HOFs)
+  // higher order functions (HOFs): functions that can take other functions as arguments or return them as result
   val aHof: (Int, (Int => Int)) => Int = (x, func) => x + 1
   val anotherHof: Int => (Int => Int) = x => (y => y + 2 * x)
 
   // quick exercise
   val superfunction: (Int, (String, (Int => Boolean)) => Int) => (Int => Int) = (x, func) => (y => x + y)
 
-  // examples: map, flatMap, filter
+  // examples: map, flatMap, filter => because they take other functions as input, so they are HOF
 
   // more examples
   // f(f(f(...(f(x)))
   @tailrec
   def nTimes(f: Int => Int, n: Int, x: Int): Int =
     if (n <= 0) x
-    else nTimes(f, n-1, f(x))
+    else nTimes(f, n - 1, f(x))
 
   val plusOne = (x: Int) => x + 1
   val tenThousand = nTimes(plusOne, 10000, 0)
@@ -37,7 +37,7 @@ object HOFsCurrying {
    */
   def nTimes_v2(f: Int => Int, n: Int): Int => Int =
     if (n <= 0) (x: Int) => x
-    else (x: Int) => nTimes_v2(f, n-1)(f(x))
+    else (x: Int) => nTimes_v2(f, n - 1)(f(x))
 
   val plusOneHundred = nTimes_v2(plusOne, 100) // po(po(po(po... risks SO if the arg is too big
   val oneHundred = plusOneHundred(0)
@@ -47,6 +47,7 @@ object HOFsCurrying {
   val add3: Int => Int = superAdder(3)
   val invokeSuperAdder = superAdder(3)(100) // 103
 
+  // currying is also available for methods
   // curried methods = methods with multiple arg list
   def curriedFormatter(fmt: String)(x: Double): String = fmt.format(x)
 
@@ -72,11 +73,11 @@ object HOFsCurrying {
    *      3 + 3 = 6
    *      6 + 4 = 10
    *
-   *  2. toCurry(f: (Int, Int) => Int): Int => Int => Int
-   *     fromCurry(f: (Int => Int => Int)): (Int, Int) => Int
+   * 2. toCurry(f: (Int, Int) => Int): Int => Int => Int
+   * fromCurry(f: (Int => Int => Int)): (Int, Int) => Int
    *
-   *  3. compose(f,g) => x => f(g(x))
-   *     andThen(f,g) => x => g(f(x))
+   * 3. compose(f,g) => x => f(g(x))
+   * andThen(f,g) => x => g(f(x))
    */
 
   // 2
@@ -107,7 +108,7 @@ object HOFsCurrying {
     println(oneHundred)
     println(standardFormat(Math.PI))
     println(preciseFormat(Math.PI))
-    println(simpleAdder(2,78)) // 80
+    println(simpleAdder(2, 78)) // 80
     println(composedApplication(14)) // 29 = 2 * 14 + 1
     println(aSequencedApplication(14)) // 30 = (14 + 1) * 2
 
