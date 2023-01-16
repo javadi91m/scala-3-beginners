@@ -22,6 +22,16 @@ abstract class SinglyLList[A] {
 
   def find(predicate: A => Boolean): A
 
+  def foreach(operator: A => Unit): Unit
+
+  def size: Int
+
+  def zipWith[B](anotherList: SinglyLList[A], operator: (A, A) => B): SinglyLList[B]
+
+  def foldLeft[B](start: B)(operator: (B, A) => B): B
+
+  def sort(compare: (A, A) => Int): SinglyLList[A]
+
 }
 
 case class EmptyList[A]() extends SinglyLList[A] {
@@ -41,8 +51,19 @@ case class EmptyList[A]() extends SinglyLList[A] {
 
   override infix def ++(anotherList: SinglyLList[A]): SinglyLList[A] = anotherList
 
-  override def find(predicateL: A => Boolean): A = throw new NoSuchElementException("List is empty")
+  override def find(predicate: A => Boolean): A = throw new NoSuchElementException("List is empty")
 
+  override def foreach(operator: A => Unit): Unit = EmptyList()
+
+  override def size: Int = 0
+
+  override def zipWith[B](anotherList: SinglyLList[A], operator: (A, A) => B): SinglyLList[B] =
+    if (!anotherList.isEmpty) throw new IllegalArgumentException("both lists must have the same size")
+    else EmptyList()
+
+  override def foldLeft[B](start: B)(operator: (B, A) => B): B = start
+
+  override def sort(compare: (A, A) => Int): SinglyLList[A] = this
 }
 
 // we're overriding head/tail methods (accessor methods) as class fields
@@ -86,6 +107,57 @@ case class SinglyLinkedList[A](override val head: A, override val tail: SinglyLL
     if (predicate(head)) head
     else tail.find(predicate)
 
+  override def foreach(operator: A => Unit): Unit = {
+    operator(head)
+    tail.foreach(operator)
+  }
+
+  override def size: Int = {
+    def size(list: SinglyLList[A], listSize: Int): Int =
+      if (list.isEmpty) listSize
+      else size(list.tail, listSize + 1)
+
+    size(this, 0)
+  }
+
+  override def zipWith[B](anotherList: SinglyLList[A], operator: (A, A) => B): SinglyLList[B] =
+    if (anotherList.isEmpty) throw new IllegalArgumentException("both lists must have the same size")
+    else SinglyLinkedList(operator(this.head, anotherList.head), this.tail.zipWith(anotherList.tail, operator))
+
+  /*
+    [1,2,3,4].foldLeft(0)(x + y)
+    = [2,3,4].foldLeft(1)(x + y)
+    = [3,4].foldLeft(3)(x + y)
+    = [4].foldLeft(6)(x + y)
+    = [].foldLeft(10)(x + y)
+    = 10
+   */
+  override def foldLeft[B](start: B)(operator: (B, A) => B): B = {
+    tail.foldLeft(operator(start, head))(operator)
+    //    def foldLeftHelper(result: B, list: SinglyLList[A]): B = {
+    //      if (list.isEmpty) result
+    //      else foldLeftHelper(operator(list.head, result), list.tail)
+    //    }
+    //    foldLeftHelper(start, this)
+  }
+
+  /*
+    compare = x - y
+    insertionSort(3, [1,2,4]) =
+    SinglyLinkedList(1, insertionSort(3, [2,4])) =
+    SinglyLinkedList(1, SinglyLinkedList(2, insertionSort(3, [4]))) =
+    SinglyLinkedList(1, SinglyLinkedList(2, SinglyLinkedList(3, [4]))) = [1,2,3,4]
+   */
+  override def sort(compare: (A, A) => Int): SinglyLList[A] = {
+    def insertionSort(elem: A, sortedList: SinglyLList[A]): SinglyLList[A] =
+      if (sortedList.isEmpty) SinglyLinkedList(elem, EmptyList())
+      else if (compare(elem, sortedList.head) <= 0) SinglyLinkedList(elem, sortedList)
+      else SinglyLinkedList(sortedList.head, insertionSort(elem, sortedList.tail))
+
+    val sortedTail = tail.sort(compare)
+    insertionSort(head, sortedTail)
+  }
+
 }
 
 object SinglyLList extends App {
@@ -100,7 +172,16 @@ object SinglyLList extends App {
   println(list2.toString + " map => " + list2.map(x => x * 2))
   println(list2.toString + " flatMap => " + list2.flatMap(x => SinglyLinkedList(x, SinglyLinkedList(x * 2, EmptyList()))))
 
-  println(list2.find(x => x == -1))
+  println("find:> " + list2.find(x => x == -1))
+  println("list2:> " + list2)
+  list2.foreach(println(_))
+  println("size:> " + list2.size)
+
+  val oddList = SinglyLinkedList(1, SinglyLinkedList(3, SinglyLinkedList(5, EmptyList())))
+  val evenList = SinglyLinkedList(2, SinglyLinkedList(4, SinglyLinkedList(6, EmptyList())))
+  println("zip:> " + oddList.zipWith(evenList, (a, b) => a * b))
+  println("foldLeft:> " + oddList.foldLeft(0)((a, b) => a + b))
+  println("sortedList:> " + list2.sort((a, b) => a - b))
 }
 
 

@@ -66,7 +66,7 @@ object HOFsCurrying_3 {
    *    - zipWith[B](LList[A], (A, A) => B): LList[B]
    *      [1,2,3].zipWith([4,5,6], x * y) => [1 * 4, 2 * 5, 3 * 6] = [4, 10, 18]
    *
-   *    - foldLeft[B](start: B)((A, B) => B): B
+   *    - foldLeft[B](start: B)((B, A) => B): B
    *      [1,2,3,4].foldLeft[Int](0)(x + y) = 10
    *      0 + 1 = 1
    *      1 + 2 = 3
