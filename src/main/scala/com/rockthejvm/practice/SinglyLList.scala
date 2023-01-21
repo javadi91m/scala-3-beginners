@@ -13,6 +13,7 @@ abstract class SinglyLList[A] {
   def add(element: A): SinglyLList[A] = SinglyLinkedList(element, this)
 
   def filter(predicate: A => Boolean): SinglyLList[A]
+  def withFilter(predicate: A => Boolean): SinglyLList[A] = filter(predicate)
 
   def map[B](transformer: A => B): SinglyLList[B]
 

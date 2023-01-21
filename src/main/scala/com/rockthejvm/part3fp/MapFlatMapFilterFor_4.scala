@@ -1,9 +1,9 @@
 package com.rockthejvm.part3fp
 
-object MapFlatMapFilterFor {
+object MapFlatMapFilterFor_4 {
 
   // standard list
-  val aList = List(1,2,3) // [1] -> [2] -> [3] -> Nil // [1,2,3]
+  val aList = List(1,2,3) // [1] -> [2] -> [3] -> Nil (Nil is empty list) // [1,2,3]
   val firstElement = aList.head
   val restOfElements = aList.tail
 
@@ -30,17 +30,40 @@ object MapFlatMapFilterFor {
     lambda(3) = ..
     lambda(4) = ..
    */
+  // withFilter returns an "IterableOps.WithFilter" by which we can call map, flatMap, foreach
   val combinations = numbers.withFilter(_ % 2 == 0).flatMap(number => chars.flatMap(char => colors.map(color => s"$number$char - $color")))
 
   // for-comprehension = IDENTICAL to flatMap + map chains
+  // please note: this for is not a for loop you see in other langs, it's an expression. we know that a regular for loop is not an expression
+  // every generator will be considered as a flatMap, except the last one, which is considered as a map
   val combinationsFor = for {
-    number <- numbers if number % 2 == 0 // generator
-    char <- chars
-    color <- colors
-  } yield s"$number$char - $color" // an EXPRESSION
+    number <- numbers if number % 2 == 0 // generator with "if guard" => "if guard" actually uses "withFilter" method instead of "filter"
+    char <- chars // generator
+    color <- colors // generator
+  } yield {
+    // an EXPRESSION
+    s"$number$char - $color"
+  }
 
-  // for-comprehensions with Unit
-  // if foreach
+  // for-comprehensions with Unit:
+  // by using "yield", we can get a List composed of items returned in the yield section.
+  // but what if we want to do something Unit there and don't want to return a List?
+  // if the data structure under question has "foreach" method, then we can use below structure:
+   for {
+    number <- numbers if number % 2 == 0 // generator with "if guard" => "if guard" actually uses "withFilter" method instead of "filter"
+    char <- chars // generator
+    color <- colors // generator
+  } {
+    println(s"here:>>>> $number$char - $color")
+  }
+
+  // map + flatMap = for comprehensions
+  // so every data structure that supports map, flatMap, also supports for comprehensions as well.
+  // if we want data structure to support "if guard" as well, then it needs to support withFilter. this method can have the same as filter
+
+  // NOTE: you need to consider when you chain multiple data structures (generators) in a for comprehensions,
+  // all of them need to be the same type. i.e. you cannot for example chain a List and a Set as generators,
+  // the reason is that compiler wants to chain these generators with flatMao and map.
 
   /**
    * Exercises
