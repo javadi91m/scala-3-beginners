@@ -2,15 +2,19 @@ package com.rockthejvm.part3fp
 
 import scala.util.Random
 
-object Options {
+object Options_7 {
 
   // options = "collections" with at most one value
+  // as a best practice, better to use Option API rather than Some API
   val anOption: Option[Int] = Option(42)
   val anEmptyOption: Option[Int] = Option.empty
 
   // alt version
   val aPresentValue: Option[Int] = Some(4)
   val anEmptyOption_v2: Option[Int] = None
+
+  // IMPORTANT: Option(null) == Empty
+  // Some(null) == Exception
 
   // "standard" API
   val isEmpty = anOption.isEmpty
@@ -40,7 +44,7 @@ object Options {
   // use-case for orElse
   val someResult = Option(unsafeMethod()).orElse(Option(fallbackMethod()))
 
-  // DESIGN
+  // DESIGN => use Options instead of nulls. if there's a chance of null presence, wrap that in an Option
   def betterUnsafeMethod(): Option[String] = None
   def betterFallbackMethod(): Option[String] = Some("A valid result")
   val betterChain = betterUnsafeMethod().orElse(betterFallbackMethod())
@@ -97,15 +101,15 @@ object Options {
   val connStatus = connection.map(_.connect())
 
   // compact
-  val connStatus_v2 =
+  val connStatus_v2: Option[String] =
     config.get("host").flatMap(h =>
       config.get("port").flatMap(p =>
         Connection(h, p).map(_.connect())
       )
     )
 
-  // for-comprehension
-  val connStatus_v3 = for {
+  // IMPORTANT: we have flatMap chains, so we can use for-comprehension:
+  val connStatus_v3: Option[String] = for {
     h <- config.get("host")
     p <- config.get("port")
     conn <- Connection(h, p)
