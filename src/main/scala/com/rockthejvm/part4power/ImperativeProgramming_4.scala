@@ -1,12 +1,12 @@
 package com.rockthejvm.part4power
 
-object ImperativeProgramming {
+object ImperativeProgramming_4 {
 
   val meaningOfLife: Int = 42
 
   var aVariable = 99
   aVariable = 100 // vars can be reassigned
-  // aVariable = "Scala" // types cannot be changed
+  // aVariable = "Scala" // illegal: types cannot be changed
 
   // modify a variable in place
   aVariable += 10 // aVariable = aVariable + 10
@@ -35,6 +35,7 @@ object ImperativeProgramming {
     Using imperative programming in Scala for no good reason defeats the purpose of Scala.
    */
 
+  // everything is Scala is an expression. so these side effects are also expressions
   val anExpression: Unit = aVariable += 10
   val aLoop: Unit = while (aVariable < 130) {
     println("counting more")
@@ -44,4 +45,5 @@ object ImperativeProgramming {
   def main(args: Array[String]): Unit = {
     testLoop()
   }
+
 }
