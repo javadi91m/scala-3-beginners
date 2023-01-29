@@ -2,7 +2,7 @@ package com.rockthejvm.part3fp
 
 import scala.util.{Failure, Random, Success, Try}
 
-object HandlingFailure {
+object HandlingFailure_8 {
 
   // Try = a potentially failed computation
   val aTry: Try[Int] = Try(42)
@@ -17,10 +17,22 @@ object HandlingFailure {
   val checkFailure = aTry.isFailure
   val aChain = aFailedTry.orElse(aTry)
 
+  // Applies first function if this is a Failure or second function if this is a Success.
+  // If the second function is initially applied and throws an exception, then the first function is applied with this exception.
+  val fold = aTry.fold(
+    exception => -1,
+    realValue => realValue + 10
+  )
+
   // map, flatMap, filter, for comprehensions
   val anIncrementedTry = aTry.map(_ + 1)
   val aFlatMappedTry = aTry.flatMap(mol => Try(s"My meaning of life is $mol"))
-  val aFilteredTry = aTry.filter(_ % 2 == 0) // Success(42)
+  val aFilteredTry = aTry.filter(_ % 2 == 0) // Success(42) . if filter doesn't match, then the Try will be changed to a NoSuchElementException
+  val aFilteredFailedTry = aTry.filter(_ % 2 == 1) // Failure(NoSuchElementException)
+  println("aFilteredFailedTry: " + aFilteredFailedTry) // Failure(java.util.NoSuchElementException: Predicate does not hold for 42)
+
+  // try.map function, will take care to automatically catch whatever the lambda can throw inside.
+  val aSafeTry = aTry.map(_ => throw new RuntimeException("not this time!!")) // this is safe
 
   // WHY: avoid unsafe APIs which can THROW exceptions
   def unsafeMethod(): String =
@@ -37,17 +49,19 @@ object HandlingFailure {
   // purely functional
   val stringLengthPure = Try(unsafeMethod()).map(_.length).getOrElse(-1)
 
-  // DESIGN
+  // DESIGN: if you're designing an API that might throw an exception, better to return a Try as output
   def betterUnsafeMethod(): Try[String] = Failure(new RuntimeException("No string for you, buster!"))
+
   def betterBackupMethod(): Try[String] = Success("Scala")
+
   val stringLengthPure_v2 = betterUnsafeMethod().map(_.length)
   val aSafeChain = betterUnsafeMethod().orElse(betterBackupMethod()).map(_.length)
 
   /**
    * Exercise:
-   *   obtain a connection,
-   *   then fetch the url,
-   *   then print the resulting HTML
+   * obtain a connection,
+   * then fetch the url,
+   * then print the resulting HTML
    */
   val host = "localhost"
   val port = "8081"
@@ -76,6 +90,15 @@ object HandlingFailure {
       Try(getConnection(host, port))
   }
 
+  val exerciseResult = Try(HttpService.getConnection(host, port))
+    // NOTE: map is safe against thrown exceptions in it
+    .map(connection => connection.get(myDesiredURL))
+    .fold(
+      throwable => s"<html>${throwable.getMessage}</html>",
+      result => result
+    )
+  println("exerciseResult: " + exerciseResult)
+
   // defensive style
   val finalHtml = try {
     val conn = HttpService.getConnection(host, port)
@@ -90,18 +113,19 @@ object HandlingFailure {
 
   // purely functional approach
   val maybeConn = Try(HttpService.getConnection(host, port))
-  val maybeHtml = maybeConn.flatMap(conn => Try(conn.get(myDesiredURL)))
+  val maybeHtml: Try[String] = maybeConn.flatMap(conn => Try(conn.get(myDesiredURL)))
   val finalResult = maybeHtml.fold(e => s"<html>${e.getMessage}</html>", s => s)
 
   // for-comprehension
-  val maybeHtml_v2 = for {
+  val maybeHtml_v2: Try[String] = for {
     conn <- HttpService.getConnectionSafe(host, port)
     html <- conn.getSafe(myDesiredURL)
   } yield html
-  val finalResult_v2 = maybeHtml.fold(e => s"<html>${e.getMessage}</html>", s => s)
+  val finalResult_v2 = maybeHtml_v2.fold(e => s"<html>${e.getMessage}</html>", s => s)
 
 
   def main(args: Array[String]): Unit = {
     println(finalResult)
   }
+
 }

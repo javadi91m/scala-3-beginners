@@ -45,6 +45,7 @@ object Options_7 {
   val someResult = Option(unsafeMethod()).orElse(Option(fallbackMethod()))
 
   // DESIGN => use Options instead of nulls. if there's a chance of null presence, wrap that in an Option
+  // if you're designing an API that might return null, better to return an Option as output
   def betterUnsafeMethod(): Option[String] = None
   def betterFallbackMethod(): Option[String] = Some("A valid result")
   val betterChain = betterUnsafeMethod().orElse(betterFallbackMethod())
