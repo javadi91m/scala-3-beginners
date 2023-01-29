@@ -2,9 +2,9 @@ package com.rockthejvm.part4power
 
 import scala.util.Random
 
-object PatternMatching {
+object PatternMatching_1 {
 
-  // switch on steroids
+  // we can consider them as "switch cases on steroids"!
   val random = new Random()
   val aValue = random.nextInt(100)
 
@@ -12,11 +12,17 @@ object PatternMatching {
     case 1 => "the first"
     case 2 => "the second"
     case 3 => "the third"
+    case x if x < 50 => s"${x}: less than 50, greater than 3"
+    case x if x < 99 => s"${x}: less than 99, greater than or equal 50"
+
+    // default case is _ => the default case is not mandatory, but if nothing matches, a scala.MatchError will be thrown
     case _ => s"something else: $aValue"
   }
 
-  // decompose values
+  // we can decompose values
+  // case classes are eligible for pattern matching
   case class Person(name: String, age: Int)
+
   val bob = Person("Bob", 16)
 
   val greeting = bob match {
@@ -31,9 +37,11 @@ object PatternMatching {
     What's the type returned? The lowest common ancestor of all types on the RHS of each branch.
    */
 
-  // PM on sealed hierarchies
+  // PM on sealed hierarchies => if you don't provide all the subclasses in the match clauses, the compiler can detect that there are some missing csaes
   sealed class Animal
+
   case class Dog(breed: String) extends Animal
+
   case class Cat(meowStyle: String) extends Animal
 
   val anAnimal: Animal = Dog("Terra Nova")
@@ -44,14 +52,17 @@ object PatternMatching {
 
   /**
    * Exercise
-   *  show(Sum(Number(2), Number(3))) = "2 + 3"
-   *  show(Sum(Sum(Number(2), Number(3)), Number(4)) = "2 + 3 + 4"
-   *  show(Prod(Sum(Number(2), Number(3)), Number(4))) = "(2 + 3) * 4"
-   *  show(Sum(Prod(Number(2), Number(3)), Number(4)) = "2 * 3 + 4"
+   * show(Sum(Number(2), Number(3))) = "2 + 3"
+   * show(Sum(Sum(Number(2), Number(3)), Number(4)) = "2 + 3 + 4"
+   * show(Prod(Sum(Number(2), Number(3)), Number(4))) = "(2 + 3) * 4"
+   * show(Sum(Prod(Number(2), Number(3)), Number(4)) = "2 * 3 + 4"
    */
   sealed trait Expr
+
   case class Number(n: Int) extends Expr
+
   case class Sum(e1: Expr, e2: Expr) extends Expr
+
   case class Prod(e1: Expr, e2: Expr) extends Expr
 
   def show(expr: Expr): String = expr match {
@@ -76,5 +87,6 @@ object PatternMatching {
     println(show(Sum(Sum(Number(2), Number(3)), Number(4))))
     println(show(Prod(Sum(Number(2), Number(3)), Number(4))))
     println(show(Sum(Prod(Number(2), Number(3)), Number(4))))
+    println(show(Prod(Sum(Prod(Number(2), Number(3)), Number(4)), Number(5))))
   }
 }
