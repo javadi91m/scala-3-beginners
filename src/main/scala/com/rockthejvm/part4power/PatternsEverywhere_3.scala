@@ -1,13 +1,13 @@
 package com.rockthejvm.part4power
 
-object PatternsEverywhere {
+object PatternsEverywhere_3 {
 
   // big idea #1: catches are actually MATCHES
   val potentialFailure = try {
     // code
   } catch {
-    case e: RuntimeException => "runtime ex"
     case npe: NullPointerException => "npe"
+    case e: RuntimeException => "runtime ex"
     case _ => "some other exception"
   }
 
@@ -15,8 +15,8 @@ object PatternsEverywhere {
     try { .. code }
     catch (e) {
       e match {
-        case e: RuntimeException => "runtime ex"
         case npe: NullPointerException => "npe"
+        case e: RuntimeException => "runtime ex"
         case _ => "some other exception"
       }
     }
@@ -36,10 +36,18 @@ object PatternsEverywhere {
   // big idea #3: new syntax (python-like)
   val aTuple = (1,2,3)
   val (a, b, c) = aTuple
+  println("a:> " + a)
+
+  case class Person(name: String, age: Int)
+  val jane = Person("Jane", 42)
+  val Person(name, age) = jane
+  println(s"$name is $age years old")
+
 
   val head :: tail = tuples
 
   def main(args: Array[String]): Unit = {
 
   }
+
 }
