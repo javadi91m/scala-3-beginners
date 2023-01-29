@@ -2,7 +2,7 @@ package com.rockthejvm.part4power
 
 import com.rockthejvm.practice.*
 
-object AllThePatterns {
+object AllThePatterns_2 {
 
   object MySingleton
 
@@ -20,8 +20,9 @@ object AllThePatterns {
     case something => s"I've matched anything, it's $something"
   }
 
+  // if we use "_" instead of a variable name, we cannot access it in the right hand side:
   val matchAnything = someValue match {
-    case _ => "I can match anything at all"
+    case _ => "I can match anything"
   }
 
   // 3 - tuples
@@ -35,7 +36,7 @@ object AllThePatterns {
 
   val nestedTuple = (1, (2, 3))
   val matchNestedTuple = nestedTuple match {
-    case (_, (2, v)) => "A nested tuple ..."
+    case (_, (2, x)) => "A nested tuple ..."
   }
 
   // 4 - case classes
@@ -70,7 +71,7 @@ object AllThePatterns {
 
   // 7 - name binding
   val bindingNames = aList match {
-    case Cons(head, rest @ Cons(_, tail)) => s"Can use $rest"
+    case Cons(head, rest @ Cons(_, tail)) => s"Can use $rest" // "rest" will be bound to anything defined after it => Cons(_, tail)
   }
 
   // 8 - chained patterns
@@ -110,13 +111,17 @@ object AllThePatterns {
   }
 
   /*
-    PM runs at runtime
-    - reflection
+    PatternMatching runs at runtime
+    - it uses reflection
     - generic types are erased at runtime
         List[String] => List
         List[Int] => List
         Function1[Int, String] => Function1
         etc.
+
+  IMPORTANT:
+  Scala 3 has some advanced features that allow it to carry lots of information (including generic types) to intermediate code (TASTy) or to runtime (advanced reflection, type tags, ...)
+  More on that in the advanced courses
    */
 
   def main(args: Array[String]): Unit = {
